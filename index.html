@@ -276,6 +276,29 @@
   <button id="topBtn" aria-label="返回顶部">↑</button>
 
   <script>
+    /*
+      旧版安卓/鸿蒙浏览器兼容：部分系统浏览器不提供 Array.find
+      和 NodeList.forEach。缺失时会让后续初始化中断，造成卡片空白、导航失效。
+    */
+    if (!Array.prototype.find) {
+      Array.prototype.find = function(callback, thisArg) {
+        if (this == null) { throw new TypeError('Array.find called on null or undefined'); }
+        var array = Object(this);
+        var length = array.length >>> 0;
+        for (var index = 0; index < length; index++) {
+          var value = array[index];
+          if (callback.call(thisArg, value, index, array)) { return value; }
+        }
+        return undefined;
+      };
+    }
+    if (typeof NodeList !== 'undefined' && !NodeList.prototype.forEach) {
+      NodeList.prototype.forEach = function(callback, thisArg) {
+        for (var index = 0; index < this.length; index++) {
+          callback.call(thisArg, this[index], index, this);
+        }
+      };
+    }
     /* 日常维护数据：后续新增或修改维护内容，优先改这里。mediaImages / mediaVideos 可放 Base64 图片或视频。 */
     var maintenanceItems = [
       { id: "gas-nozzle", title: "保护气喷嘴清理", summary: "防止气孔、穿透底下、飞溅增多", purpose: "防止喷嘴堵塞、偏吹，避免保护气不足导致焊缝出现气孔、穿透底下，飞溅增多等缺陷。", methods: ["确认焊机停止，焊接区域处于安全状态，插上小车及导向轮安全销。", "检查保护气喷嘴口是否有飞溅物、堵塞。", "使用专用工具清理喷嘴外部和喷嘴口。", "清理后确认喷嘴无异物。"], notes: ["禁止用硬物强行敲击喷嘴，防止喷嘴变形。"], frequency: "每班检查，以及批量填丝后检查，发现污染及时清理。", mediaImages: [], mediaVideos: [] },
