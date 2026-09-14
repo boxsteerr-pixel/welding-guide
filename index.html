@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
-  <title>焊机操作工快速指导</title>
+  <meta name="theme-color" content="#0a67d8">
+  <link rel="manifest" href="manifest.json">
+  <title>操作工快速指导</title>
   <style>
     :root {
       --bg: #f3f7fc;
@@ -86,6 +88,7 @@
     .hero h1 { position: relative; z-index: 1; margin: 0; max-width: 100%; font-size: 30px; letter-spacing: 0; line-height: 1.18; text-shadow: 0 3px 12px rgba(0,0,0,.26); }
     .subtitle { position: relative; z-index: 1; margin: 9px 0 0; max-width: 100%; color: rgba(255,255,255,.9); font-size: 16px; font-weight: 700; }
     .brand { position: relative; z-index: 2; display: inline-flex; margin-top: 12px; padding: 4px 9px; border: 1px solid rgba(255,255,255,.34); border-radius: 999px; font-size: 12px; letter-spacing: 1px; background: rgba(255,255,255,.12); backdrop-filter: blur(8px); }
+    .install-btn { display: none; position: relative; z-index: 2; min-height: 44px; margin: 12px 0 0 10px; padding: 0 13px; border: 1px solid rgba(255,255,255,.44); border-radius: 9px; color: #fff; background: rgba(255,255,255,.16); font-size: 14px; }
     .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: -28px 4px 14px; position: sticky; top: 6px; z-index: 8; padding: 8px 8px 0; background: rgba(255,255,255,.97); border: 1px solid rgba(218,230,245,.92); border-radius: 12px; box-shadow: var(--shadow); backdrop-filter: blur(10px); }
     button, .button { min-height: 44px; border: 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; }
     .nav button { position: relative; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #17253a; background: transparent; border-radius: 10px 10px 0 0; box-shadow: none; font-size: 15px; }
@@ -178,6 +181,11 @@
     .toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 4px; }
     .footer { color: #506984; text-align: center; font-size: 14px; margin: 16px 4px 0; padding: 16px 10px; border-radius: 12px; background: #eaf4ff; border: 1px solid #dcebf8; }
     #topBtn { position: fixed; right: 14px; bottom: 18px; width: 48px; height: 48px; border-radius: 50%; color: #fff; background: #075fc2; box-shadow: var(--shadow); display: none; z-index: 20; }
+    .pwa-notice { position: fixed; left: 12px; right: 72px; bottom: 18px; z-index: 35; display: none; align-items: center; gap: 10px; min-height: 48px; padding: 8px 10px 8px 13px; border: 1px solid #b9d9fb; border-radius: 10px; color: #073e76; background: rgba(242,249,255,.98); box-shadow: 0 10px 28px rgba(8,48,92,.2); font-size: 14px; font-weight: 700; }
+    .pwa-notice.visible { display: flex; }
+    #offlineNotice { bottom: 76px; color: #7a4310; border-color: #ffd297; background: rgba(255,248,235,.98); }
+    .pwa-notice span { flex: 1; }
+    .pwa-notice button { min-height: 36px; padding: 0 10px; border-radius: 7px; color: #fff; background: #0a67d8; font-size: 13px; white-space: nowrap; }
     @media (min-width: 520px) { .home-maintenance-grid { grid-template-columns: repeat(4, 1fr); } }
     @media (max-width: 519px) {
       .home-maintenance-grid { grid-template-columns: repeat(2, 1fr); }
@@ -198,6 +206,7 @@
       <h1>焊机操作工快速指导</h1>
       <p class="subtitle">日常维护 · 异常处理 · 安全事项 · 快速查询</p>
       <span class="brand">MADE BY FANGPING</span>
+      <button id="installBtn" class="install-btn" type="button">安装到桌面</button>
     </header>
 
     <nav class="nav" aria-label="主模块">
@@ -274,6 +283,8 @@
     <img id="imageModalImg" src="" alt="放大图片" onclick="event.stopPropagation()" onmousedown="event.preventDefault()" ontouchstart="event.stopPropagation()">
   </div>
   <button id="topBtn" aria-label="返回顶部">↑</button>
+  <div id="offlineNotice" class="pwa-notice" role="status" aria-live="polite"><span>当前为离线模式，正在使用本地手册</span></div>
+  <div id="updateNotice" class="pwa-notice" role="status" aria-live="polite"><span>发现新版操作手册</span><button id="updateBtn" type="button">立即更新</button></div>
 
   <script>
     /*
@@ -540,6 +551,19 @@
       var hits = faultItems.filter(function(f){ return searchableText(f).toLowerCase().indexOf(q.toLowerCase()) >= 0; });
       box.innerHTML = hits.length ? hits.map(function(f){ return faultCard(f, q); }).join('') : '<div class="card">没有找到匹配异常。</div>';
     }
+    function applyDeepLink() {
+      var sectionMap = { home: 'home', welder: 'home', maintenance: 'maintenance', faults: 'faults', safety: 'safety' };
+      var hashValue = (window.location.hash || '').replace(/^#/, '').toLowerCase();
+      var queryValue = '';
+      if (window.URLSearchParams) {
+        queryValue = new URLSearchParams(window.location.search).get('section') || '';
+      } else {
+        var queryMatch = window.location.search.match(/[?&]section=([^&]+)/i);
+        queryValue = queryMatch ? decodeURIComponent(queryMatch[1].replace(/\+/g, ' ')) : '';
+      }
+      var requestedSection = hashValue || String(queryValue).toLowerCase();
+      if (sectionMap[requestedSection]) { showSection(sectionMap[requestedSection]); }
+    }
     document.querySelectorAll('.nav button').forEach(function(b){ b.addEventListener('click', function(){ showSection(b.dataset.nav); }); });
     document.getElementById('quickChips').innerHTML = quickKeywords.map(function(k){ return '<button class="chip" data-key="' + k + '">' + k + '</button>'; }).join('');
     document.getElementById('quickChips').addEventListener('click', function(e){ if (e.target.dataset.key) doSearch(e.target.dataset.key); });
@@ -549,7 +573,84 @@
     document.getElementById('collapseAll').addEventListener('click', function(){ document.querySelectorAll('#faultList details').forEach(function(d){ d.open = false; }); });
     document.getElementById('topBtn').addEventListener('click', function(){ window.scrollTo(0, 0); });
     window.addEventListener('scroll', function(){ document.getElementById('topBtn').style.display = window.scrollY > 360 ? 'block' : 'none'; });
-    attachLaserDiagnosisSteps(); renderMaintenance(); renderFaults(); renderSafety();
+
+    /* PWA 提示：仅在浏览器明确支持时显示，不影响 file:// 本地打开。 */
+    var deferredInstallPrompt = null;
+    var pendingUpdateRegistration = null;
+    var updateRefreshRequested = false;
+    var offlineNoticeTimer = null;
+    var wasOffline = false;
+    var installButton = document.getElementById('installBtn');
+    var offlineNotice = document.getElementById('offlineNotice');
+    var updateNotice = document.getElementById('updateNotice');
+    var updateButton = document.getElementById('updateBtn');
+    var standaloneMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+
+    function showPwaNotice(element, duration) {
+      element.classList.add('visible');
+      if (offlineNoticeTimer) { window.clearTimeout(offlineNoticeTimer); }
+      if (duration) {
+        offlineNoticeTimer = window.setTimeout(function(){ element.classList.remove('visible'); }, duration);
+      }
+    }
+    function updateOfflineNotice() {
+      if (navigator.onLine === false) {
+        wasOffline = true;
+        offlineNotice.querySelector('span').textContent = '当前为离线模式，正在使用本地手册';
+        showPwaNotice(offlineNotice);
+      } else if (wasOffline) {
+        wasOffline = false;
+        offlineNotice.querySelector('span').textContent = '网络已恢复';
+        showPwaNotice(offlineNotice, 3000);
+      }
+    }
+    function showUpdateNotice(registration) {
+      pendingUpdateRegistration = registration;
+      updateNotice.classList.add('visible');
+    }
+    function registerPwa() {
+      if (!('serviceWorker' in navigator) || (location.protocol !== 'https:' && location.protocol !== 'http:')) { return; }
+      navigator.serviceWorker.register('service-worker.js', { scope: './' }).then(function(registration) {
+        if (registration.waiting) { showUpdateNotice(registration); }
+        registration.addEventListener('updatefound', function() {
+          var worker = registration.installing;
+          if (!worker) { return; }
+          worker.addEventListener('statechange', function() {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) { showUpdateNotice(registration); }
+          });
+        });
+      }).catch(function() {
+        /* Service Worker 不可用时保留普通网页访问，不显示错误。 */
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        if (updateRefreshRequested) { window.location.reload(); }
+      });
+    }
+    window.addEventListener('beforeinstallprompt', function(event) {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      if (!standaloneMode) { installButton.style.display = 'inline-flex'; }
+    });
+    installButton.addEventListener('click', function() {
+      if (!deferredInstallPrompt) { return; }
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(function() {
+        deferredInstallPrompt = null;
+        installButton.style.display = 'none';
+      });
+    });
+    updateButton.addEventListener('click', function() {
+      if (pendingUpdateRegistration && pendingUpdateRegistration.waiting) {
+        updateRefreshRequested = true;
+        pendingUpdateRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+    window.addEventListener('offline', updateOfflineNotice);
+    window.addEventListener('online', updateOfflineNotice);
+    window.addEventListener('hashchange', applyDeepLink);
+    updateOfflineNotice();
+    registerPwa();
+    attachLaserDiagnosisSteps(); renderMaintenance(); renderFaults(); renderSafety(); applyDeepLink();
   </script>
 </body>
 </html>
