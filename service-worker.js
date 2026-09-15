@@ -2,7 +2,7 @@
  * 操作工快速指导：GitHub Pages 子目录安全的离线缓存。
  * 日常发布只需改 index.html 内容，并将 APP_VERSION 递增后一起发布。
  */
-const APP_VERSION = "1.0.2";
+const APP_VERSION = "1.0.3";
 const CACHE_PREFIX = "operator-guide-";
 const CACHE_NAME = CACHE_PREFIX + APP_VERSION;
 const APP_ROOT = new URL("./", self.location.href);

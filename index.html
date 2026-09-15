@@ -202,7 +202,7 @@
 <body>
   <main class="app">
     <header class="hero">
-      <div class="statusbar"><span>09:30</span><span>100%</span></div>
+      <div class="statusbar"><span id="currentTime">--:--</span><span>本地手册</span></div>
       <h1>焊机操作工快速指导</h1>
       <p class="subtitle">日常维护 · 异常处理 · 安全事项 · 快速查询</p>
       <span class="brand">MADE BY FANGPING</span>
@@ -283,8 +283,9 @@
     <img id="imageModalImg" src="" alt="放大图片" onclick="event.stopPropagation()" onmousedown="event.preventDefault()" ontouchstart="event.stopPropagation()">
   </div>
   <button id="topBtn" aria-label="返回顶部">↑</button>
-  <div id="offlineNotice" class="pwa-notice" role="status" aria-live="polite"><span>当前为离线模式，正在使用本地手册</span></div>
-  <div id="updateNotice" class="pwa-notice" role="status" aria-live="polite"><span>发现新版操作手册</span><button id="updateBtn" type="button">立即更新</button></div>
+    <div id="offlineNotice" class="pwa-notice" role="status" aria-live="polite"><span>当前为离线模式，正在使用本地手册</span></div>
+    <div id="updateNotice" class="pwa-notice" role="status" aria-live="polite"><span>发现新版操作手册</span><button id="updateBtn" type="button">立即更新</button></div>
+    <div id="installNotice" class="pwa-notice" role="status" aria-live="polite"><span>请在浏览器菜单中选择“添加到主屏幕”或“安装应用”。</span></div>
 
   <script>
     /*
@@ -583,8 +584,20 @@
     var installButton = document.getElementById('installBtn');
     var offlineNotice = document.getElementById('offlineNotice');
     var updateNotice = document.getElementById('updateNotice');
+    var installNotice = document.getElementById('installNotice');
     var updateButton = document.getElementById('updateBtn');
     var standaloneMode = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+
+    function updateCurrentTime() {
+      var now = new Date();
+      var hours = String(now.getHours()).padStart(2, '0');
+      var minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('currentTime').textContent = hours + ':' + minutes;
+    }
+    function showInstallButton() {
+      var isWebPage = location.protocol === 'https:' || location.protocol === 'http:';
+      installButton.style.display = !standaloneMode && isWebPage ? 'inline-flex' : 'none';
+    }
 
     function showPwaNotice(element, duration) {
       element.classList.add('visible');
@@ -629,16 +642,20 @@
     window.addEventListener('beforeinstallprompt', function(event) {
       event.preventDefault();
       deferredInstallPrompt = event;
-      if (!standaloneMode) { installButton.style.display = 'inline-flex'; }
+      showInstallButton();
     });
     installButton.addEventListener('click', function() {
-      if (!deferredInstallPrompt) { return; }
+      if (!deferredInstallPrompt) {
+        showPwaNotice(installNotice, 5000);
+        return;
+      }
       deferredInstallPrompt.prompt();
       deferredInstallPrompt.userChoice.then(function() {
         deferredInstallPrompt = null;
         installButton.style.display = 'none';
       });
     });
+    window.addEventListener('appinstalled', function() { installButton.style.display = 'none'; });
     updateButton.addEventListener('click', function() {
       if (pendingUpdateRegistration && pendingUpdateRegistration.waiting) {
         updateRefreshRequested = true;
@@ -648,6 +665,9 @@
     window.addEventListener('offline', updateOfflineNotice);
     window.addEventListener('online', updateOfflineNotice);
     window.addEventListener('hashchange', applyDeepLink);
+    updateCurrentTime();
+    window.setInterval(updateCurrentTime, 30000);
+    showInstallButton();
     updateOfflineNotice();
     registerPwa();
     attachLaserDiagnosisSteps(); renderMaintenance(); renderFaults(); renderSafety(); applyDeepLink();
