@@ -154,12 +154,6 @@
     .visual-step-title { display: block; color: #075fc2; font-weight: 800; margin-bottom: 4px; }
     .visual-step-text { margin: 0 0 8px; color: #3b4d63; font-size: 15px; }
     .visual-step-img { display: block; width: 100%; max-height: 520px; object-fit: contain; border-radius: 8px; border: 1px solid #d2e0ef; background: #fff; cursor: zoom-in; touch-action: manipulation; }
-    .step-pager { border: 1px solid #cfe1f5; border-radius: 10px; overflow: hidden; background: #f8fbff; }
-    .step-slide { display: none; padding: 12px; }
-    .step-slide.active { display: block; }
-    .step-pager-nav { display: grid; grid-template-columns: 92px 1fr 92px; align-items: center; gap: 8px; min-height: 54px; padding: 8px 10px; border-top: 1px solid #dce8f6; background: #eef7ff; }
-    .step-pager-nav button { min-height: 40px; padding: 0 8px; border: 1px solid #afd3f8; border-radius: 7px; color: #075fc2; background: #fff; font-size: 14px; }
-    .step-pager-count { color: #4b6785; text-align: center; font-size: 14px; font-weight: 800; }
     .pin-img { display: block; width: 100%; max-height: 560px; object-fit: contain; border-radius: 8px; border: 1px solid #d7e7f7; background: #f6fbff; margin-top: 10px; cursor: zoom-in; touch-action: manipulation; }
     body.modal-open { overflow: hidden; }
     .image-modal { position: fixed; inset: 0; z-index: 99; display: none; align-items: center; justify-content: center; padding: 68px 12px 20px; background: rgba(4,18,35,.9); touch-action: none; overflow: hidden; }
@@ -379,29 +373,9 @@
     }
     function renderVisualSteps(item) {
       if (!item.visualSteps || !item.visualSteps.length) return '';
-      if (item.stepMode === 'pager') {
-        return '<div class="kv"><b>图文操作步骤</b><div class="step-pager" id="pager-' + item.id + '">' + item.visualSteps.map(function(step, index){
-          return '<div class="step-slide' + (index === 0 ? ' active' : '') + '" data-step-index="' + index + '" aria-hidden="' + (index === 0 ? 'false' : 'true') + '"><span class="visual-step-title">步骤 ' + (index + 1) + '：' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p><img class="visual-step-img" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"></div>';
-        }).join('') + '<div class="step-pager-nav"><button type="button" onclick="changeStepPage(\'' + item.id + '\', -1)">← 上一步</button><span class="step-pager-count">第 <b>1</b> / ' + item.visualSteps.length + ' 步</span><button type="button" onclick="changeStepPage(\'' + item.id + '\', 1)">下一步 →</button></div></div></div>';
-      }
       return '<div class="kv"><b>图文操作步骤</b><div class="visual-steps">' + item.visualSteps.map(function(step, index){
         return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p><img class="visual-step-img" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"></div>';
       }).join('') + '</div></div>';
-    }
-    function changeStepPage(faultId, direction) {
-      var pager = document.getElementById('pager-' + faultId);
-      if (!pager) return;
-      var slides = pager.querySelectorAll('.step-slide');
-      var activeIndex = 0;
-      slides.forEach(function(slide, index){ if (slide.classList.contains('active')) activeIndex = index; });
-      var nextIndex = Math.max(0, Math.min(slides.length - 1, activeIndex + direction));
-      slides.forEach(function(slide, index){
-        var active = index === nextIndex;
-        slide.classList.toggle('active', active);
-        slide.setAttribute('aria-hidden', active ? 'false' : 'true');
-      });
-      var count = pager.querySelector('.step-pager-count b');
-      if (count) count.textContent = String(nextIndex + 1);
     }
     function attachLaserDiagnosisSteps() {
       var laser = faultItems.find(function(item){ return item.id === 'laser-source-diagnosis'; });
@@ -441,14 +415,13 @@
       clamp.productionAllowed = '禁止继续生产';
       clamp.notify = ['班长', '点检'];
       clamp.steps = ['按以下画面步骤处理；调整后仍无法消除故障时，停止处理并通知点检。'];
-      clamp.stepMode = 'pager';
       clamp.visualSteps = [
-        { title: '进入夹钳台控制器', text: '在总览画面中，点击“入口夹钳台控制器”或“出口夹钳台控制器”。', image: 'assets/clamp-platform-step-1.jpg' },
-        { title: '进入调整模式', text: '进入画面后，点击“进入调整模式”按钮，确认调整模式变为绿色。', image: 'assets/clamp-platform-step-2.jpg' },
-        { title: '比对两侧实际数值', text: '观察入口、出口两侧的实际编码器数值，确认两侧数值差异。', image: 'assets/clamp-platform-step-3.jpg' },
-        { title: '锁定需要保持的一侧', text: '根据数值情况，点击单侧“锁定轴 LOCK”；在未锁轴一侧进行后续调整。', image: 'assets/clamp-platform-step-4.jpg' },
-        { title: '微调未锁轴侧位置', text: '对未锁轴侧夹钳位置进行微调。注意：按焊接位置调整时，数值应减小；调整到两侧接近一致。', image: 'assets/clamp-platform-step-5.jpg' },
-        { title: '取消锁定并恢复动作', text: '数值调整完成后，取消锁定轴、取消调整模式；回到出入口画面，点击夹紧台位置前后移动，确认故障消除。', image: 'assets/clamp-platform-step-6.jpg' }
+        { title: '进入夹钳台控制器', text: '在总览画面中，点击“入口夹钳台控制器”或“出口夹钳台控制器”。', image: 'assets/clamp-platform-step-1.png' },
+        { title: '进入调整模式', text: '进入画面后，点击“进入调整模式”按钮，确认调整模式变为绿色。', image: 'assets/clamp-platform-step-2.png' },
+        { title: '比对两侧实际数值', text: '观察入口、出口两侧的实际编码器数值，确认两侧数值差异。', image: 'assets/clamp-platform-step-3.png' },
+        { title: '锁定需要保持的一侧', text: '根据数值情况，点击单侧“锁定轴 LOCK”；在未锁轴一侧进行后续调整。', image: 'assets/clamp-platform-step-4.png' },
+        { title: '微调未锁轴侧位置', text: '对未锁轴侧夹钳位置进行微调。注意：按焊接位置调整时，数值应减小；调整到两侧接近一致。', image: 'assets/clamp-platform-step-5.png' },
+        { title: '取消锁定并恢复动作', text: '数值调整完成后，取消锁定轴、取消调整模式；回到出入口画面，点击夹紧台位置前后移动，确认故障消除。', image: 'assets/clamp-platform-step-6.png' }
       ];
     }
     function renderMaintenance() {
