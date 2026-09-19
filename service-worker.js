@@ -2,7 +2,7 @@
  * 操作工快速指导：GitHub Pages 子目录安全的离线缓存。
  * 日常发布只需改 index.html 内容，并将 APP_VERSION 递增后一起发布。
  */
-const APP_VERSION = "1.0.3";
+const APP_VERSION = "1.0.4";
 const CACHE_PREFIX = "operator-guide-";
 const CACHE_NAME = CACHE_PREFIX + APP_VERSION;
 const APP_ROOT = new URL("./", self.location.href);
@@ -36,6 +36,11 @@ function discoverLocalAssets(html) {
   const attributePattern = /(?:src|poster|href)=["']([^"']+)["']/gi;
   let match;
   while ((match = attributePattern.exec(html))) {
+    const value = match[1];
+    if (!/^data:|^#|^javascript:/i.test(value)) { urls.push(value); }
+  }
+  const stepImagePattern = /\bimage\s*:\s*["']([^"']+)["']/gi;
+  while ((match = stepImagePattern.exec(html))) {
     const value = match[1];
     if (!/^data:|^#|^javascript:/i.test(value)) { urls.push(value); }
   }
