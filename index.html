@@ -655,6 +655,8 @@
             if (worker.state === 'installed' && navigator.serviceWorker.controller) { showUpdateNotice(registration); }
           });
         });
+        /* 手机浏览器可能延后检查 Service Worker；每次打开页面时主动检查新版。 */
+        registration.update().catch(function() {});
       }).catch(function() {
         /* Service Worker 不可用时保留普通网页访问，不显示错误。 */
       });
@@ -686,7 +688,14 @@
       }
     });
     window.addEventListener('offline', updateOfflineNotice);
-    window.addEventListener('online', updateOfflineNotice);
+    window.addEventListener('online', function() {
+      updateOfflineNotice();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(function(registration) {
+          if (registration) { registration.update().catch(function() {}); }
+        });
+      }
+    });
     window.addEventListener('hashchange', applyDeepLink);
     updateCurrentTime();
     window.setInterval(updateCurrentTime, 30000);
