@@ -335,6 +335,7 @@
       { id: "leveling-roll", title: "平整轮异常", category: "平整机构", alarmText: "平整轮异常", riskLevel: "中风险", productionAllowed: "不建议继续生产", notify: ["班长", "点检"], symptoms: ["平整轮动作异常", "异响、卡滞或位置不到位", "带钢通过不平稳"], causes: ["平整轮区域异物", "安全销未确认", "机械或限位异常"], checks: ["确认设备停止", "检查平整轮周边", "确认安全销位置"], actions: ["停止设备", "插入安全销后检查", "清理可见异物", "通知点检"], prohibitions: ["禁止运行中接近平整轮", "禁止未插安全销伸手处理"], records: ["记录现场状态", "记录处理过程"], steps: ["画面操作步骤预留位置"], mediaImages: [], mediaVideos: [] },
       { id: "laser-chiller", title: "激光冷却水箱异常", category: "激光冷却", alarmText: "激光冷却水箱报警", riskLevel: "高风险", productionAllowed: "禁止继续生产", notify: ["班长", "点检", "激光专业人员"], symptoms: ["水箱报警", "温度、压力或流量异常", "激光源无法就绪"], causes: ["液位低", "过滤器堵塞", "水泵或温控异常", "管路阀门异常"], checks: ["确认水箱报警代码", "查看液位和温度", "确认阀门和管路状态"], actions: ["停止激光焊接", "记录水箱报警", "通知专业人员处理", "确认冷却恢复后再启机"], prohibitions: ["禁止缺冷却继续焊接", "禁止屏蔽水箱报警"], records: ["记录报警代码", "记录水温、水压、液位"], steps: ["画面操作步骤预留位置"], mediaImages: [], mediaVideos: [] },
       { id: "laser-chiller-switch", title: "激光焊机冷却水箱切换手顺", category: "激光冷却 / 冷却水箱切换", alarmText: "冷却水箱切换操作", riskLevel: "高风险", productionAllowed: "切换期间禁止焊接", notify: ["班长", "点检", "激光专业人员"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["按以下画面顺序完成切换；冷却器水泵未停止或仍有流量时，不得进行下一步。"], visualSteps: [
+        { title: "到达冷却水箱切换位置", text: "激光冷却水箱出现异常或进行常规切换时，移步至焊机入口传侧。水箱控制切换开关位于 2#冷却柜，切换阀站位于 1#冷却柜与 2#冷却柜中间。" },
         { title: "停机并将开关置于中间停止位", text: "将 1#冷却水泵、2#冷却水泵和补水泵选择开关均打到中间“停止”位置。停顿片刻，待冷却器水泵停止、无流量后，再进行下一步。", image: "assets/laser-chiller-switch-step-1.png" },
         { title: "切换至 2#机的阀门位置", text: "当前为 1#机使用状态时，切换至 2#机：将所有橘红色阀顺时针旋转 90°，由水平变为垂直状态，共计 12 个阀门。", image: "assets/laser-chiller-switch-step-2.png" },
         { title: "确认 2#机运行与 1#机备机状态", text: "左侧开关切换到 2#机运行，中间开关切换到 2#机运行，右侧开关切换到 1#备机；确认 2#机正常运行、1#机处于备用状态。", image: "assets/laser-chiller-switch-step-3.png" }
@@ -383,7 +384,7 @@
     function renderVisualSteps(item) {
       if (!item.visualSteps || !item.visualSteps.length) return '';
       return '<div class="kv"><b>图文操作步骤</b><div class="visual-steps">' + item.visualSteps.map(function(step, index){
-        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p><img class="visual-step-img" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"></div>';
+        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p>' + (step.image ? '<img class="visual-step-img" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)">' : '') + '</div>';
       }).join('') + '</div></div>';
     }
     function attachLaserDiagnosisSteps() {
