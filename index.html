@@ -546,6 +546,15 @@
         { title: "切换至 2#机的阀门位置", text: "当前为 1#机使用状态时，切换至 2#机：将所有橘红色阀顺时针旋转 90°，由水平变为垂直状态，共计 12 个阀门。", image: "assets/laser-chiller-switch-step-2.png" },
         { title: "确认 2#机运行与 1#机备机状态", text: "左侧开关切换到 2#机运行，中间开关切换到 2#机运行，右侧开关切换到 1#备机；确认 2#机正常运行、1#机处于备用状态。", image: "assets/laser-chiller-switch-step-3.png" }
       ], mediaImages: [], mediaVideos: [] },
+      { id: "qcds-penetration-exposure", title: "调整QCDS穿透率曝光度", category: "QCDS / 熔透传感器参数", alarmText: "QCDS 穿透率曝光度需调整", riskLevel: "中风险", productionAllowed: "仅授权人员按现场确认操作", notify: ["班长", "工艺", "点检"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["按以下画面顺序调整；调整数值前须记录原始参数，调整完成后保存配置。"], visualSteps: [
+        { title: "进入熔透传感器画面", text: "在主画面点击“配置(C)”，再点击“熔透传感器(P)…”。", image: "assets/qcds-penetration-exposure-step-1.png" },
+        { title: "进入原始图像页面", text: "在熔透传感器参数配置弹窗中，点击“原始图像(O)”按钮。", image: "assets/qcds-penetration-exposure-step-2.png" },
+        { title: "打开参数设置", text: "在“原始图像(O)”下拉菜单中，点击“参数设置(C)…”。", image: "assets/qcds-penetration-exposure-step-3.png" },
+        { title: "查找曝光参数区域", text: "在右侧参数设置框内查找编号 310 或 311。", image: "assets/qcds-penetration-exposure-step-4.png" },
+        { title: "调整曝光度数值", text: "在原有参数基础上增加 300–500；例如 3800 调整为 4100。", image: "assets/qcds-penetration-exposure-step-5.png" },
+        { title: "保存配置", text: "点击标题栏上的“系统(S)”，再点击“保存配置(S)”。", image: "assets/qcds-penetration-exposure-step-6.png" },
+        { title: "退出参数画面", text: "保存完成后点击“系统(S)”，再点击“退出(X)”即可。", image: "assets/qcds-penetration-exposure-step-7.png" }
+      ], mediaImages: [], mediaVideos: [] },
       { id: "feed-roll-position", title: "夹送辊定位修改操作", category: "夹送辊定位 / 参数调整", alarmText: "夹送辊定位偏差 / 定位长度需修改", riskLevel: "中风险", productionAllowed: "按现场工艺确认", notify: ["班长", "工艺"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["仅在确认需要修改夹送辊定位、并由具备相应操作权限的人员执行时使用。"], visualSteps: [
         { title: "进入夹送辊定位画面", text: "进入总画面后，点击“夹送辊定位”按钮。", image: "assets/feed-roll-position-step-1.jpg" },
         { title: "调整入口、出口定位长度", text: "进入夹送辊定位画面后，按当前截面规格对应列进行微调：增加入口定位长度，数值增大；增加出口定位长度，数值减小。使用实际值区域的正向、反向按钮调整。", image: "assets/feed-roll-position-step-2.png" }
