@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -538,22 +538,22 @@
       { id: "leveling-roll", title: "平整轮异常", category: "平整机构", alarmText: "平整轮异常", riskLevel: "中风险", productionAllowed: "不建议继续生产", notify: ["班长", "点检"], symptoms: ["平整轮动作异常", "异响、卡滞或位置不到位", "带钢通过不平稳"], causes: ["平整轮区域异物", "安全销未确认", "机械或限位异常"], checks: ["确认设备停止", "检查平整轮周边", "确认安全销位置"], actions: ["停止设备", "插入安全销后检查", "清理可见异物", "通知点检"], prohibitions: ["禁止运行中接近平整轮", "禁止未插安全销伸手处理"], records: ["记录现场状态", "记录处理过程"], steps: ["画面操作步骤预留位置"], mediaImages: [], mediaVideos: [] },
       { id: "laser-chiller-switch", title: "激光焊机冷却水箱切换手顺", category: "激光冷却 / 冷却水箱切换", alarmText: "冷却水箱切换操作", riskLevel: "高风险", productionAllowed: "切换期间禁止焊接", notify: ["班长", "点检", "激光专业人员"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["按以下画面顺序完成切换；冷却器水泵未停止或仍有流量时，不得进行下一步。"], visualSteps: [
         { title: "到达冷却水箱切换位置", text: "激光冷却水箱出现异常或进行常规切换时，移步至焊机入口传侧。水箱控制切换开关位于 2#冷却柜，切换阀站位于 1#冷却柜与 2#冷却柜中间。" },
-        { title: "停机并将开关置于中间停止位", text: "将 1#冷却水泵、2#冷却水泵和补水泵选择开关均打到中间“停止”位置。停顿片刻，待冷却器水泵停止、无流量后，再进行下一步。提示：如出现冷却器故障停机，可跳过此步骤。", image: "assets/laser-chiller-switch-step-1.png" },
-        { title: "切换至 2#机的阀门位置", text: "当前为 1#机使用状态时，切换至 2#机：将所有橘红色阀顺时针旋转 90°，由水平变为垂直状态，共计 12 个阀门。", image: "assets/laser-chiller-switch-step-2.png" },
-        { title: "确认 2#机运行与 1#机备机状态", text: "左侧开关切换到 2#机运行，中间开关切换到 2#机运行，右侧开关切换到 1#备机；确认 2#机正常运行、1#机处于备用状态。", image: "assets/laser-chiller-switch-step-3.png" }
+        { title: "停机并将开关置于中间停止位", text: "将 1#冷却水泵、2#冷却水泵和补水泵选择开关均打到中间“停止”位置。停顿片刻，待冷却器水泵停止、无流量后，再进行下一步。提示：如出现冷却器故障停机，可跳过此步骤。", image: "assets/laser-chiller-switch-step-1.png?v=1.0.17" },
+        { title: "切换至 2#机的阀门位置", text: "当前为 1#机使用状态时，切换至 2#机：将所有橘红色阀顺时针旋转 90°，由水平变为垂直状态，共计 12 个阀门。", image: "assets/laser-chiller-switch-step-2.png?v=1.0.17" },
+        { title: "确认 2#机运行与 1#机备机状态", text: "左侧开关切换到 2#机运行，中间开关切换到 2#机运行，右侧开关切换到 1#备机；确认 2#机正常运行、1#机处于备用状态。", image: "assets/laser-chiller-switch-step-3.png?v=1.0.17" }
       ], mediaImages: [], mediaVideos: [] },
       { id: "qcds-penetration-exposure", title: "调整QCDS穿透率曝光度", category: "QCDS / 熔透传感器参数", alarmText: "QCDS 穿透率曝光度需调整", riskLevel: "中风险", productionAllowed: "仅授权人员按现场确认操作", notify: ["班长", "工艺", "点检"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["按以下画面顺序调整；调整数值前须记录原始参数，调整完成后保存配置。"], visualSteps: [
-        { title: "进入熔透传感器画面", text: "在主画面点击“配置(C)”，再点击“熔透传感器(P)…”。", image: "assets/qcds-penetration-exposure-step-1.png" },
-        { title: "进入原始图像页面", text: "在熔透传感器参数配置弹窗中，点击“原始图像(O)”按钮。", image: "assets/qcds-penetration-exposure-step-2.png" },
-        { title: "打开参数设置", text: "在“原始图像(O)”下拉菜单中，点击“参数设置(C)…”。", image: "assets/qcds-penetration-exposure-step-3.png" },
-        { title: "查找曝光参数区域", text: "在右侧参数设置框内查找编号 310 或 311。", image: "assets/qcds-penetration-exposure-step-4.png" },
-        { title: "调整曝光度数值", text: "在原有参数基础上增加 300–500；例如 3800 调整为 4100。", image: "assets/qcds-penetration-exposure-step-5.png" },
-        { title: "保存配置", text: "点击标题栏上的“系统(S)”，再点击“保存配置(S)”。", image: "assets/qcds-penetration-exposure-step-6.png" },
-        { title: "退出参数画面", text: "保存完成后点击“系统(S)”，再点击“退出(X)”即可。", image: "assets/qcds-penetration-exposure-step-7.png" }
+        { title: "进入熔透传感器画面", text: "在主画面点击“配置(C)”，再点击“熔透传感器(P)…”。", image: "assets/qcds-penetration-exposure-step-1.png?v=1.0.17" },
+        { title: "进入原始图像页面", text: "在熔透传感器参数配置弹窗中，点击“原始图像(O)”按钮。", image: "assets/qcds-penetration-exposure-step-2.png?v=1.0.17" },
+        { title: "打开参数设置", text: "在“原始图像(O)”下拉菜单中，点击“参数设置(C)…”。", image: "assets/qcds-penetration-exposure-step-3.png?v=1.0.17" },
+        { title: "查找曝光参数区域", text: "在右侧参数设置框内查找编号 310 或 311。", image: "assets/qcds-penetration-exposure-step-4.png?v=1.0.17" },
+        { title: "调整曝光度数值", text: "在原有参数基础上增加 300–500；例如 3800 调整为 4100。", image: "assets/qcds-penetration-exposure-step-5.png?v=1.0.17" },
+        { title: "保存配置", text: "点击标题栏上的“系统(S)”，再点击“保存配置(S)”。", image: "assets/qcds-penetration-exposure-step-6.png?v=1.0.17" },
+        { title: "退出参数画面", text: "保存完成后点击“系统(S)”，再点击“退出(X)”即可。", image: "assets/qcds-penetration-exposure-step-7.png?v=1.0.17" }
       ], mediaImages: [], mediaVideos: [] },
       { id: "feed-roll-position", title: "夹送辊定位修改操作", category: "夹送辊定位 / 参数调整", alarmText: "夹送辊定位偏差 / 定位长度需修改", riskLevel: "中风险", productionAllowed: "按现场工艺确认", notify: ["班长", "工艺"], symptoms: [], causes: [], checks: [], actions: [], prohibitions: [], records: [], steps: ["仅在确认需要修改夹送辊定位、并由具备相应操作权限的人员执行时使用。"], visualSteps: [
-        { title: "进入夹送辊定位画面", text: "进入总画面后，点击“夹送辊定位”按钮。", image: "assets/feed-roll-position-step-1.jpg" },
-        { title: "调整入口、出口定位长度", text: "进入夹送辊定位画面后，按当前截面规格对应列进行微调：增加入口定位长度，数值增大；增加出口定位长度，数值减小。使用实际值区域的正向、反向按钮调整。", image: "assets/feed-roll-position-step-2.png" }
+        { title: "进入夹送辊定位画面", text: "进入总画面后，点击“夹送辊定位”按钮。", image: "assets/feed-roll-position-step-1.jpg?v=1.0.17" },
+        { title: "调整入口、出口定位长度", text: "进入夹送辊定位画面后，按当前截面规格对应列进行微调：增加入口定位长度，数值增大；增加出口定位长度，数值减小。使用实际值区域的正向、反向按钮调整。", image: "assets/feed-roll-position-step-2.png?v=1.0.17" }
       ], mediaImages: [], mediaVideos: [] }
     ];
 
@@ -636,12 +636,12 @@
       clamp.notify = ['班长', '点检'];
       clamp.steps = ['按以下画面步骤处理；调整后仍无法消除故障时，停止处理并通知点检。'];
       clamp.visualSteps = [
-        { title: '进入夹钳台控制器', text: '按照报警画面，选择“入口夹钳台控制器”或“出口夹钳台控制器”。', image: 'assets/clamp-platform-step-1.png' },
-        { title: '进入调整模式', text: '进入画面后，点击左下角“调整模式”按钮，按钮变为绿色后进入调整模式。', image: 'assets/clamp-platform-step-2.png' },
-        { title: '比对两侧实际数值', text: '观察入口、出口两侧实际编码器数值，确认两侧数值差异。', image: 'assets/clamp-platform-step-3.png' },
-        { title: '锁定需要保持的一侧', text: '根据数值，点击单侧“锁定轴 LOCK”进行锁轴；仅对未锁轴侧进行后续调整。', image: 'assets/clamp-platform-step-4.png' },
-        { title: '微调未锁轴侧位置', text: '对未锁轴处夹紧台进行微调，直至两侧实际值接近，差值约 1 mm。', image: 'assets/clamp-platform-step-5.png' },
-        { title: '取消锁定并恢复动作', text: '数值调整完成后，取消锁定轴、取消调整模式；回到出入口画面，点击夹紧台位置前后移动，确认故障消除。', image: 'assets/clamp-platform-step-6.png' }
+        { title: '进入夹钳台控制器', text: '按照报警画面，选择“入口夹钳台控制器”或“出口夹钳台控制器”。', image: 'assets/clamp-platform-step-1.png?v=1.0.17' },
+        { title: '进入调整模式', text: '进入画面后，点击左下角“调整模式”按钮，按钮变为绿色后进入调整模式。', image: 'assets/clamp-platform-step-2.png?v=1.0.17' },
+        { title: '比对两侧实际数值', text: '观察入口、出口两侧实际编码器数值，确认两侧数值差异。', image: 'assets/clamp-platform-step-3.png?v=1.0.17' },
+        { title: '锁定需要保持的一侧', text: '根据数值，点击单侧“锁定轴 LOCK”进行锁轴；仅对未锁轴侧进行后续调整。', image: 'assets/clamp-platform-step-4.png?v=1.0.17' },
+        { title: '微调未锁轴侧位置', text: '对未锁轴处夹紧台进行微调，直至两侧实际值接近，差值约 1 mm。', image: 'assets/clamp-platform-step-5.png?v=1.0.17' },
+        { title: '取消锁定并恢复动作', text: '数值调整完成后，取消锁定轴、取消调整模式；回到出入口画面，点击夹紧台位置前后移动，确认故障消除。', image: 'assets/clamp-platform-step-6.png?v=1.0.17' }
       ];
     }
     function renderMaintenance() {
