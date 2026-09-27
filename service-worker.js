@@ -2,7 +2,7 @@
  * 操作工快速指导：GitHub Pages 子目录安全的离线缓存。
  * 日常发布只需改 index.html 内容，并将 APP_VERSION 递增后一起发布。
  */
-const APP_VERSION = "1.0.17";
+const APP_VERSION = "1.0.18";
 const CACHE_PREFIX = "operator-guide-";
 const CACHE_NAME = CACHE_PREFIX + APP_VERSION;
 const APP_ROOT = new URL("./", self.location.href);
@@ -59,23 +59,19 @@ function discoverLocalAssets(html) {
   }).filter(Boolean);
 }
 
-/* 非核心媒体逐项尽力缓存；其中任意文件失败都不能影响离线手册主体。 */
+/*
+ * 新版必须连同已发现的步骤图片一起完整下载。若任一资源失败，install 会失败，
+ * 浏览器会继续使用旧版缓存，避免出现正文已更新而图文步骤空白的半成品版本。
+ */
 async function cacheDiscoveredAssets(cache) {
-  try {
-    const response = await fetch(new URL("index.html", APP_ROOT).toString(), { cache: "no-store" });
-    if (!response.ok) { return; }
-    const requests = discoverLocalAssets(await response.text());
-    await Promise.all(requests.map(async function(url) {
-      try {
-        const asset = await fetch(url, { cache: "no-store" });
-        if (isCacheable(asset)) { await cache.put(url, asset.clone()); }
-      } catch (error) {
-        /* 单个独立媒体失败时，保留已完成的核心离线版本。 */
-      }
-    }));
-  } catch (error) {
-    /* 核心资源已经成功缓存，媒体发现失败不阻止安装。 */
-  }
+  const response = await fetch(new URL("index.html", APP_ROOT).toString(), { cache: "no-store" });
+  if (!response.ok) { throw new Error("Unable to read the new guide for offline caching."); }
+  const requests = discoverLocalAssets(await response.text());
+  await Promise.all(requests.map(async function(url) {
+    const asset = await fetch(url, { cache: "no-store" });
+    if (!isCacheable(asset)) { throw new Error("Unable to cache guide asset: " + url); }
+    await cache.put(url, asset.clone());
+  }));
 }
 
 async function networkFirst(request) {
