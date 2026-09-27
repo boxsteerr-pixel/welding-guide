@@ -880,7 +880,11 @@
         if (updateRefreshRequested) { window.location.reload(); }
       });
       navigator.serviceWorker.ready.then(function(registration) {
-        if (registration.active) { registration.active.postMessage({ type: 'CACHE_MEDIA' }); }
+        window.setTimeout(function() {
+          if (navigator.onLine !== false && registration.active) {
+            registration.active.postMessage({ type: 'CACHE_MEDIA' });
+          }
+        }, 15000);
       }).catch(function() {});
     }
     window.addEventListener('beforeinstallprompt', function(event) {

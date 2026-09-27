@@ -105,3 +105,11 @@ test("renders external step images with mobile-friendly lazy decoding", async fu
   assert.match(visualStepTemplate[0], /loading="lazy"/);
   assert.match(visualStepTemplate[0], /decoding="async"/);
 });
+
+test("defers background media caching so it does not compete with the first opened step", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const pwaBlock = html.match(/navigator\.serviceWorker\.ready\.then\(function\(registration\) \{[\s\S]*?\}\)\.catch\(function\(\) \{\}\);/);
+  assert.ok(pwaBlock, "PWA media cache block should exist");
+  assert.match(pwaBlock[0], /window\.setTimeout/);
+  assert.match(pwaBlock[0], /15000/);
+});
