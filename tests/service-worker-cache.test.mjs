@@ -106,21 +106,18 @@ test("renders visual step images with mobile-friendly lazy decoding", async func
   assert.match(visualStepTemplate[0], /decoding="async"/);
 });
 
-test("embeds every visual procedure image so mobile does not depend on asset requests", async function() {
+test("uses compact versioned files for visual procedure images", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const stepImages = Array.from(html.matchAll(/\bimage\s*:\s*(["'])(.*?)\1/g), function(match) {
     return match[2];
   });
 
-  assert.equal(
-    stepImages.some(function(source) { return source.startsWith("assets/"); }),
-    false,
-    "visual procedure images must be embedded in the offline page"
-  );
-  assert.ok(
-    stepImages.filter(function(source) { return source.startsWith("data:image/"); }).length >= 12,
-    "all visual procedure steps should have embedded image data"
-  );
+  const optimizedImages = stepImages.filter(function(source) {
+    return /^assets\/steps\/[^?]+\.webp\?v=1\.0\.23$/.test(source);
+  });
+
+  assert.equal(optimizedImages.length, 18, "all procedure steps should use compact versioned WebP files");
+  assert.ok(Buffer.byteLength(html, "utf8") < 8 * 1024 * 1024, "the entry page must stay lightweight for mobile loading");
 });
 
 test("defers background media caching so it does not compete with the first opened step", async function() {
