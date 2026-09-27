@@ -2,7 +2,7 @@
  * 操作工快速指导：GitHub Pages 子目录安全的离线缓存。
  * 日常发布只需改 index.html 内容，并将 APP_VERSION 递增后一起发布。
  */
-const APP_VERSION = "1.0.18";
+const APP_VERSION = "1.0.19";
 const CACHE_PREFIX = "operator-guide-";
 const CACHE_NAME = CACHE_PREFIX + APP_VERSION;
 const APP_ROOT = new URL("./", self.location.href);
@@ -67,11 +67,21 @@ async function cacheDiscoveredAssets(cache) {
   const response = await fetch(new URL("index.html", APP_ROOT).toString(), { cache: "no-store" });
   if (!response.ok) { throw new Error("Unable to read the new guide for offline caching."); }
   const requests = discoverLocalAssets(await response.text());
-  await Promise.all(requests.map(async function(url) {
-    const asset = await fetch(url, { cache: "no-store" });
-    if (!isCacheable(asset)) { throw new Error("Unable to cache guide asset: " + url); }
-    await cache.put(url, asset.clone());
-  }));
+  for (const url of requests) {
+    let lastError;
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        const asset = await fetch(url, { cache: "no-store" });
+        if (!isCacheable(asset)) { throw new Error("Unable to cache guide asset: " + url); }
+        await cache.put(url, asset.clone());
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    if (lastError) { throw lastError; }
+  }
 }
 
 async function networkFirst(request) {
