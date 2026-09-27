@@ -3,9 +3,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
 
-test("does not install a new cache when a discovered step image cannot be cached", async function() {
+test("installs the core update without downloading all step images first", async function() {
   const source = await readFile(new URL("../service-worker.js", import.meta.url), "utf8");
   const handlers = new Map();
+  let imageAttempts = 0;
   const cache = {
     async addAll() {},
     async put() {},
@@ -24,6 +25,7 @@ test("does not install a new cache when a discovered step image cannot be cached
         return new Response('<img src="assets/missing-step.png">', { status: 200 });
       }
       if (url.includes("missing-step.png")) {
+        imageAttempts += 1;
         throw new TypeError("image download failed");
       }
       return new Response("", { status: 200 });
@@ -40,7 +42,8 @@ test("does not install a new cache when a discovered step image cannot be cached
   let installPromise;
   handlers.get("install")({ waitUntil: function(promise) { installPromise = promise; } });
 
-  await assert.rejects(installPromise, /image download failed/);
+  await installPromise;
+  assert.equal(imageAttempts, 0);
 });
 
 test("retries a transient step image download before completing installation", async function() {
@@ -84,6 +87,21 @@ test("retries a transient step image download before completing installation", a
   handlers.get("install")({ waitUntil: function(promise) { installPromise = promise; } });
 
   await installPromise;
+  imageAttempts = 0;
+  let mediaCachePromise;
+  handlers.get("message")({
+    data: { type: "CACHE_MEDIA" },
+    waitUntil: function(promise) { mediaCachePromise = promise; }
+  });
+  await mediaCachePromise;
   assert.equal(imageAttempts, 2);
   assert.equal(cachedUrls.some(function(url) { return url.includes("transient-step.png"); }), true);
+});
+
+test("renders external step images with mobile-friendly lazy decoding", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const visualStepTemplate = html.match(/<img class="visual-step-img"[^>]+>/);
+  assert.ok(visualStepTemplate, "visual step image template should exist");
+  assert.match(visualStepTemplate[0], /loading="lazy"/);
+  assert.match(visualStepTemplate[0], /decoding="async"/);
 });

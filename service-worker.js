@@ -2,7 +2,7 @@
  * 操作工快速指导：GitHub Pages 子目录安全的离线缓存。
  * 日常发布只需改 index.html 内容，并将 APP_VERSION 递增后一起发布。
  */
-const APP_VERSION = "1.0.19";
+const APP_VERSION = "1.0.20";
 const CACHE_PREFIX = "operator-guide-";
 const CACHE_NAME = CACHE_PREFIX + APP_VERSION;
 const APP_ROOT = new URL("./", self.location.href);
@@ -59,10 +59,7 @@ function discoverLocalAssets(html) {
   }).filter(Boolean);
 }
 
-/*
- * 新版必须连同已发现的步骤图片一起完整下载。若任一资源失败，install 会失败，
- * 浏览器会继续使用旧版缓存，避免出现正文已更新而图文步骤空白的半成品版本。
- */
+/* 后台逐张缓存步骤图片；未成功前保留旧缓存，避免弱网更新出现空白图片。 */
 async function cacheDiscoveredAssets(cache) {
   const response = await fetch(new URL("index.html", APP_ROOT).toString(), { cache: "no-store" });
   if (!response.ok) { throw new Error("Unable to read the new guide for offline caching."); }
@@ -99,6 +96,11 @@ async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
   if (cached) { return cached; }
+  const previous = await caches.match(request);
+  if (previous) {
+    await cache.put(request, previous.clone());
+    return previous;
+  }
   return addToCurrentCache(request, await fetch(request));
 }
 
@@ -106,24 +108,27 @@ self.addEventListener("install", function(event) {
   event.waitUntil((async function() {
     const cache = await caches.open(CACHE_NAME);
     await cache.addAll(CORE_ASSETS);
-    await cacheDiscoveredAssets(cache);
   })());
 });
 
 self.addEventListener("activate", function(event) {
-  event.waitUntil((async function() {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map(function(cacheName) {
-      return cacheName.indexOf(CACHE_PREFIX) === 0 && cacheName !== CACHE_NAME
-        ? caches.delete(cacheName)
-        : undefined;
-    }));
-    await self.clients.claim();
-  })());
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("message", function(event) {
   if (event.data && event.data.type === "SKIP_WAITING") { self.skipWaiting(); }
+  if (event.data && event.data.type === "CACHE_MEDIA") {
+    event.waitUntil((async function() {
+      const cache = await caches.open(CACHE_NAME);
+      await cacheDiscoveredAssets(cache);
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(function(cacheName) {
+        return cacheName.indexOf(CACHE_PREFIX) === 0 && cacheName !== CACHE_NAME
+          ? caches.delete(cacheName)
+          : undefined;
+      }));
+    })());
+  }
 });
 
 self.addEventListener("fetch", function(event) {

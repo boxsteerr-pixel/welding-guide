@@ -586,7 +586,7 @@
     function highlight(text, kw) { var s = escapeHtml(text); if (!kw) return s; return s.replace(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), function(m){ return "<mark>" + m + "</mark>"; }); }
     function list(items) { return "<ul>" + items.map(function(x){ return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>"; }
     function mediaBlock(item) {
-      var imgs = (item.mediaImages || []).map(function(src){ return '<img class="pin-img" src="' + src + '" alt="现场图片" onclick="openImageModal(event, this.src, this.alt)">'; }).join("");
+      var imgs = (item.mediaImages || []).map(function(src){ return '<img class="pin-img" loading="lazy" decoding="async" src="' + src + '" alt="现场图片" onclick="openImageModal(event, this.src, this.alt)">'; }).join("");
       var vids = (item.mediaVideos || []).map(function(src){ return '<video class="pin-img" controls src="' + src + '"></video>'; }).join("");
       if ((item.visualSteps || []).length && !imgs && !vids) return "";
       return imgs + vids + '<div class="media-slot">预留图片及视频位置：后续可在数据中的 mediaImages / mediaVideos 填入 Base64。</div>';
@@ -594,7 +594,7 @@
     function renderVisualSteps(item) {
       if (!item.visualSteps || !item.visualSteps.length) return '';
       return '<div class="kv"><b>图文操作步骤</b><div class="visual-steps">' + item.visualSteps.map(function(step, index){
-        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p>' + (step.image ? '<img class="visual-step-img" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"><span class="image-tap-hint">点击查看大图</span>' : '') + '</div>';
+        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p>' + (step.image ? '<img class="visual-step-img" loading="lazy" decoding="async" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"><span class="image-tap-hint">点击查看大图</span>' : '') + '</div>';
       }).join('') + '</div></div>';
     }
     function attachLaserDiagnosisSteps() {
@@ -659,7 +659,7 @@
     }
     function renderSafety() {
       document.getElementById('safetyList').innerHTML = safetyItems.map(function(s, i){ return '<div class="card warning"><h3>' + (i + 1) + '. 安全提醒</h3><p>' + escapeHtml(s) + '</p></div>'; }).join('');
-      document.getElementById('pinList').innerHTML = safetyPinPositions.map(function(p){ return '<details><summary><span>' + escapeHtml(p.name) + '</span><span>查看</span></summary><div class="body"><p>' + escapeHtml(p.summary) + '</p>' + (p.image ? '<img class="pin-img" src="' + p.image + '" alt="' + escapeHtml(p.name) + '" onclick="openImageModal(event, this.src, this.alt)">' : '<div class="media-slot">图片预留位置：后续可在 image 字段填入 Base64。</div>') + '</div></details>'; }).join('');
+      document.getElementById('pinList').innerHTML = safetyPinPositions.map(function(p){ return '<details><summary><span>' + escapeHtml(p.name) + '</span><span>查看</span></summary><div class="body"><p>' + escapeHtml(p.summary) + '</p>' + (p.image ? '<img class="pin-img" loading="lazy" decoding="async" src="' + p.image + '" alt="' + escapeHtml(p.name) + '" onclick="openImageModal(event, this.src, this.alt)">' : '<div class="media-slot">图片预留位置：后续可在 image 字段填入 Base64。</div>') + '</div></details>'; }).join('');
     }
     var modalScale = 1;
     var modalX = 0;
@@ -879,6 +879,9 @@
       navigator.serviceWorker.addEventListener('controllerchange', function() {
         if (updateRefreshRequested) { window.location.reload(); }
       });
+      navigator.serviceWorker.ready.then(function(registration) {
+        if (registration.active) { registration.active.postMessage({ type: 'CACHE_MEDIA' }); }
+      }).catch(function() {});
     }
     window.addEventListener('beforeinstallprompt', function(event) {
       event.preventDefault();
