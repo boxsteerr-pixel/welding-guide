@@ -156,7 +156,7 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.27/, "visible page version should match the deployed cache version");
+  assert.match(html, /版本：V1\.0\.28/, "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {
@@ -164,6 +164,17 @@ test("removes the four retired fault entries", async function() {
 
   ["welding-car", "centering", "clamping-table-short-stroke", "leveling-roll"].forEach(function(id) {
     assert.doesNotMatch(html, new RegExp('id: "' + id + '"'), id + " should not remain in the fault list");
+  });
+});
+
+test("uses only existing fault entries in the home common-treatment list", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const commonList = html.match(/var common = \[([^\]]+)\];/);
+  const faultIds = new Set(Array.from(html.matchAll(/\{ id: "([^"]+)"/g), function(match) { return match[1]; }));
+
+  assert.ok(commonList, "home common-treatment list should exist");
+  Array.from(commonList[1].matchAll(/"([^"]+)"/g), function(match) { return match[1]; }).forEach(function(id) {
+    assert.ok(faultIds.has(id), "home common-treatment item " + id + " must exist in faultItems");
   });
 });
 
