@@ -120,6 +120,33 @@ test("uses compact versioned files for visual procedure images", async function(
   assert.ok(Buffer.byteLength(html, "utf8") < 8 * 1024 * 1024, "the entry page must stay lightweight for mobile loading");
 });
 
+test("includes daily 5MM guide-wheel gap lubrication with both reference images", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const item = html.match(/\{ id: "guide-wheel-gap-lubrication",[\s\S]*?mediaVideos: \[\] \}/);
+
+  assert.ok(item, "guide-wheel lubrication maintenance item should exist");
+  assert.match(item[0], /title: "导向轮5MM缝隙润滑"/);
+  assert.match(item[0], /frequency: "1次\/日"/);
+  assert.match(item[0], /assets\/steps\/guide-wheel-gap-lubrication-1\.webp\?v=1\.0\.24/);
+  assert.match(item[0], /assets\/steps\/guide-wheel-gap-lubrication-2\.webp\?v=1\.0\.24/);
+});
+
+test("adds temporary manual scrap handling steps for double-shear belt faults", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const start = html.indexOf('{ id: "double-shear-belt"');
+  const end = html.indexOf('{ id: "clamping-table-short-stroke"', start);
+  const item = html.slice(start, end);
+
+  assert.ok(start >= 0 && end > start, "double-shear belt fault item should exist");
+  assert.match(item, /productionAllowed: "视情况"/);
+  assert.match(item, /皮带失效或打滑时，可先将电磁阀插头拔掉，暂时人工处理废料。/);
+  const beltCheck = item.indexOf('assets/steps/double-shear-belt-step-0.webp?v=1.0.26');
+  const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
+  const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
+  assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
+  assert.match(html, /版本：V1\.0\.26/, "visible page version should match the deployed cache version");
+});
+
 test("defers background media caching so it does not compete with the first opened step", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const pwaBlock = html.match(/navigator\.serviceWorker\.ready\.then\(function\(registration\) \{[\s\S]*?\}\)\.catch\(function\(\) \{\}\);/);
