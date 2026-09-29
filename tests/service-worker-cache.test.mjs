@@ -151,6 +151,19 @@ test("includes damaged and normal references for protective-gas nozzle cleaning"
   assert.ok(damaged >= 0 && normal > damaged, "damaged nozzle image should precede the normal nozzle image");
 });
 
+test("adds QCDS weld-imaging troubleshooting steps in the supplied order", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const start = html.indexOf('{ id: "qcds-weld-imaging"');
+  const end = html.indexOf('{ id: "feed-roll-position"', start);
+  const item = html.slice(start, end);
+
+  assert.ok(start >= 0 && end > start, "QCDS weld-imaging fault item should exist before feed-roll positioning");
+  const curve = item.indexOf('assets/steps/qcds-weld-imaging-step-1.webp?v=1.0.30');
+  const alarm = item.indexOf('assets/steps/qcds-weld-imaging-step-2.webp?v=1.0.30');
+  const camera = item.indexOf('assets/steps/qcds-weld-imaging-step-3.webp?v=1.0.30');
+  assert.ok(curve >= 0 && alarm > curve && camera > alarm, "QCDS weld-imaging images should follow the supplied order");
+});
+
 test("adds temporary manual scrap handling steps for double-shear belt faults", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const start = html.indexOf('{ id: "double-shear-belt"');
@@ -164,7 +177,7 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.29/, "visible page version should match the deployed cache version");
+  assert.match(html, /版本：V1\.0\.30/, "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {
@@ -173,6 +186,11 @@ test("removes the four retired fault entries", async function() {
   ["welding-car", "centering", "clamping-table-short-stroke", "leveling-roll"].forEach(function(id) {
     assert.doesNotMatch(html, new RegExp('id: "' + id + '"'), id + " should not remain in the fault list");
   });
+});
+
+test("does not show the retired forced-pull warning in secondary scrap cleaning", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(html, /卡死废边不得强拉，应通知点检确认。/);
 });
 
 test("uses only existing fault entries in the home common-treatment list", async function() {
