@@ -116,7 +116,7 @@ test("uses compact versioned files for visual procedure images", async function(
     return /^assets\/steps\/[^?]+\.webp\?v=1\.0\.23$/.test(source);
   });
 
-  assert.equal(optimizedImages.length, 18, "all procedure steps should use compact versioned WebP files");
+  assert.equal(optimizedImages.length, 17, "all procedure steps should use compact versioned WebP files");
   assert.ok(Buffer.byteLength(html, "utf8") < 8 * 1024 * 1024, "the entry page must stay lightweight for mobile loading");
 });
 
@@ -178,6 +178,19 @@ test("adds QCDS weld-imaging troubleshooting steps in the supplied order", async
   assert.ok(curve >= 0 && alarm > curve && camera > alarm, "QCDS weld-imaging images should follow the supplied order");
 });
 
+test("replaces only the last clamp-platform procedure image", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const start = html.indexOf("function attachClampPlatformSteps()");
+  const end = html.indexOf("function renderMaintenance()", start);
+  const steps = html.slice(start, end);
+
+  assert.ok(start >= 0 && end > start, "clamp-platform procedure should exist");
+  assert.match(steps, /clamp-platform-step-1\.webp\?v=1\.0\.23/);
+  assert.match(steps, /clamp-platform-step-5\.webp\?v=1\.0\.23/);
+  assert.match(steps, /clamp-platform-step-6\.webp\?v=1\.0\.32/);
+  assert.equal((steps.match(/image: '/g) || []).length, 6, "clamp-platform procedure should retain all six steps");
+});
+
 test("adds temporary manual scrap handling steps for double-shear belt faults", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const start = html.indexOf('{ id: "double-shear-belt"');
@@ -191,7 +204,7 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.31/, "visible page version should match the deployed cache version");
+  assert.match(html, /版本：V1\.0\.32/, "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {
