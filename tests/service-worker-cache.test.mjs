@@ -141,6 +141,20 @@ test("includes the dedicated tool image for guide-wheel slag cleaning", async fu
   assert.match(item[0], /assets\/steps\/guide-wheel-cleaning-tool\.webp\?v=1\.0\.29/);
 });
 
+test("adds per-shift welding-car underside and rail inspection with supplied images", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const item = html.match(/\{ id: "welding-car-underside-check",[\s\S]*?mediaVideos: \[\] \}/);
+
+  assert.ok(item, "welding-car underside inspection maintenance item should exist");
+  assert.match(item[0], /title: "焊接小车底部检查"/);
+  assert.match(item[0], /frequency: "1次\/班"/);
+  assert.match(item[0], /将焊接小车开到操作侧，检查小车底部及两侧轨道。/);
+  assert.match(item[0], /如有异物，及时清理。/);
+  const location = item[0].indexOf("assets/steps/welding-car-underside-check-1.webp?v=1.0.31");
+  const inspection = item[0].indexOf("assets/steps/welding-car-underside-check-2.webp?v=1.0.31");
+  assert.ok(location >= 0 && inspection > location, "supplied inspection images should remain in order");
+});
+
 test("includes damaged and normal references for protective-gas nozzle cleaning", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const item = html.match(/\{ id: "gas-nozzle",[\s\S]*?mediaVideos: \[\] \}/);
@@ -177,7 +191,7 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.30/, "visible page version should match the deployed cache version");
+  assert.match(html, /版本：V1\.0\.31/, "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {
