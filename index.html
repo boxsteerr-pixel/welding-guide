@@ -468,7 +468,7 @@
     </section>
 
     <footer class="footer">
-      版本：V1.0.28<br>
+      版本：V1.0.29<br>
       适用设备：激光焊机<br>
       适用人员：焊机操作工<br>
       维护人：焊接管理组
@@ -521,7 +521,7 @@
     /* 日常维护数据：后续新增或修改维护内容，优先改这里。mediaImages / mediaVideos 可放 Base64 图片或视频。 */
     var maintenanceItems = [
       { id: "gas-nozzle", title: "保护气喷嘴清理", summary: "防止气孔、穿透底下、飞溅增多", purpose: "防止喷嘴堵塞、偏吹，避免保护气不足导致焊缝出现气孔、穿透底下，飞溅增多等缺陷。", methods: ["确认焊机停止，焊接区域处于安全状态，插上小车及导向轮安全销。", "检查保护气喷嘴口是否有飞溅物、堵塞。", "使用专用工具清理喷嘴外部和喷嘴口。", "清理后确认喷嘴无异物。"], notes: ["禁止用硬物强行敲击喷嘴，防止喷嘴变形。"], frequency: "每班检查，以及批量填丝后检查，发现污染及时清理。", mediaImages: ["assets/steps/gas-nozzle-damaged.webp?v=1.0.27", "assets/steps/gas-nozzle-normal.webp?v=1.0.27"], mediaVideos: [] },
-      { id: "guide-wheel", title: "导向轮清渣", summary: "防止下保护气喷嘴装置损坏", purpose: "防止导向轮结渣造成下保护气喷嘴装置损坏，或穿透率异常报警。", methods: ["确认设备停止。", "插上小车安全销，导向轮安全销。", "使用工具清理导向轮侧面结渣。"], notes: ["戴好手套清理导向轮，防止烫伤。", "清理时注意防止铁屑飞入眼睛。"], frequency: "发现积渣严重及时清理，一般点检会提前清理。", mediaImages: [], mediaVideos: [] },
+      { id: "guide-wheel", title: "导向轮清渣", summary: "防止下保护气喷嘴装置损坏", purpose: "防止导向轮结渣造成下保护气喷嘴装置损坏，或穿透率异常报警。", methods: ["确认设备停止。", "插上小车安全销，导向轮安全销。", "使用工具清理导向轮侧面结渣。"], notes: ["戴好手套清理导向轮，防止烫伤。", "清理时注意防止铁屑飞入眼睛。"], frequency: "发现积渣严重及时清理，一般点检会提前清理。", mediaImages: ["assets/steps/guide-wheel-cleaning-tool.webp?v=1.0.29"], mediaVideos: [] },
       { id: "guide-wheel-gap-lubrication", title: "入出口导向轮5MM缝隙润滑", summary: "保持导向轮缝隙润滑顺畅", purpose: "对导向轮 5MM 缝隙进行润滑，减少卡滞和异常磨损。", purposeHighlight: "入出口共有4个导向杆", methods: ["确认设备停止，作业区域处于安全状态。", "插上小车安全销、导向轮安全销。", "使用松锈剂，对准导向轮圆圈标识的内缝隙均匀喷射。", "按第二张图的标识位置补充喷射，确认缝隙处已润滑。"], notes: ["喷射时佩戴必要的劳动防护用品。", "禁止在设备运行或未确认安全状态时进行喷射。"], frequency: "1次/日", mediaImages: ["assets/steps/guide-wheel-gap-lubrication-1.webp?v=1.0.24", "assets/steps/guide-wheel-gap-lubrication-2.webp?v=1.0.24"], mediaVideos: [] },
       { id: "scissors-clean", title: "剪刀擦灰", summary: "保证剪切端面清洁", purpose: "防止剪切区域灰尘、铁屑堆积，影响剪切端面质量，避免端面毛刺、间隙异常影响焊接。", methods: ["确认剪刀处于停止和安全状态。", "清理剪刀附近灰尘、铁屑和油污。", "擦拭剪刀周边可接触区域，保持端面区域清洁。", "检查剪切区域是否有残留废边或异物。"], notes: ["不插剪刀安全销情况下，可使用入口传动侧压缩空软管吹扫。", "禁止未插上剪刀安全销时把手伸入剪刃危险区域。"], frequency: "每班检查，剪切异常或端面灰尘多时及时清理。", mediaImages: [], mediaVideos: [] },
       { id: "secondary-scrap", title: "二次剪切废边清理", summary: "防止废边堆积、卡阻", purpose: "防止废边堆积影响二次剪切动作，避免废边卡阻、带钢端面异常或设备报警。", methods: ["确认二次剪切区域停止动作。", "检查废边收集区域是否堆积。", "使用指定工具清理废边，不得徒手拉拽卡住的废边。", "清理后确认废边通道畅通。"], notes: ["禁止在剪切动作未停止时清理废边。", "废边锋利，必须佩戴手套。", "卡死废边不得强拉，应通知点检确认。"], frequency: "每班检查，废边堆积时立即清理。", mediaImages: [], mediaVideos: [] },

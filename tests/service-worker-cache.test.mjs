@@ -133,6 +133,14 @@ test("includes daily 5MM guide-wheel gap lubrication with both reference images"
   assert.match(html, /class="purpose-highlight"/, "maintenance purpose highlights should have a dedicated red style");
 });
 
+test("includes the dedicated tool image for guide-wheel slag cleaning", async function() {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const item = html.match(/\{ id: "guide-wheel",[\s\S]*?mediaVideos: \[\] \}/);
+
+  assert.ok(item, "guide-wheel slag cleaning maintenance item should exist");
+  assert.match(item[0], /assets\/steps\/guide-wheel-cleaning-tool\.webp\?v=1\.0\.29/);
+});
+
 test("includes damaged and normal references for protective-gas nozzle cleaning", async function() {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   const item = html.match(/\{ id: "gas-nozzle",[\s\S]*?mediaVideos: \[\] \}/);
@@ -156,7 +164,7 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.28/, "visible page version should match the deployed cache version");
+  assert.match(html, /版本：V1\.0\.29/, "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {
