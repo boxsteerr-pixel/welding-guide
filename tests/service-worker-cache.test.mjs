@@ -204,7 +204,10 @@ test("adds temporary manual scrap handling steps for double-shear belt faults", 
   const valveGroup = item.indexOf('assets/steps/double-shear-belt-step-1.webp?v=1.0.25');
   const connector = item.indexOf('assets/steps/double-shear-belt-step-2.webp?v=1.0.25');
   assert.ok(beltCheck >= 0 && valveGroup > beltCheck && connector > valveGroup, "reference images should follow the supplied order");
-  assert.match(html, /版本：V1\.0\.32/, "visible page version should match the deployed cache version");
+  const worker = await readFile(new URL("../service-worker.js", import.meta.url), "utf8");
+  const release = worker.match(/const APP_VERSION = "([^"]+)"/);
+  assert.ok(release, "worker should declare its release version");
+  assert.ok(html.includes("版本：V" + release[1] + "<br>"), "visible page version should match the deployed cache version");
 });
 
 test("removes the four retired fault entries", async function() {

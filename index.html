@@ -385,17 +385,77 @@
       .home-secondary-action .home-action-icon { width: 48px; height: 48px; flex-basis: 48px; }
       .home-secondary-action .home-action-copy strong { font-size: 18px; }
     }
+    /* 返回统一入口：随蓝色页头滚动，不遮挡内容。 */
+    .home-return {
+      position: absolute;
+      z-index: 3;
+      top: env(safe-area-inset-top, 0px);
+      left: max(4px, env(safe-area-inset-left, 0px));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      color: #bcecff;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .home-return svg { width: 23px; height: 23px; }
+    .home-return:hover { background: rgba(255, 255, 255, .1); }
+    .home-return:focus-visible { outline: 3px solid #bcecff; outline-offset: -3px; }
+    .statusbar { padding-left: 28px; gap: 12px; }
+    #currentTime { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .install-btn {
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      margin: 12px 0 0;
+      padding: 0 14px;
+      border: 1px solid rgba(157, 223, 255, .65);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(28, 174, 235, .28), rgba(255, 255, 255, .08));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+      font-size: 14px;
+      line-height: 1;
+    }
+    .install-btn svg { flex: 0 0 20px; width: 20px; height: 20px; color: #bcecff; }
+    .install-btn:hover { background: rgba(49, 191, 244, .3); }
+    .install-btn:focus-visible { outline: 3px solid #bcecff; outline-offset: 3px; }
+    @media (max-width: 719px) {
+      .hero {
+        min-height: 0;
+        padding-top: calc(10px + min(env(safe-area-inset-top, 0px), 12px));
+        padding-bottom: 26px;
+      }
+      .statusbar { margin-bottom: 18px; }
+      .home-return { top: min(env(safe-area-inset-top, 0px), 12px); }
+    }
+    @media (max-width: 719px) and (display-mode: standalone) {
+      .hero { padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+      .home-return { top: env(safe-area-inset-top, 0px); }
+    }
   </style>
 </head>
 <body>
   <main class="app">
     <header class="hero">
-      <div class="statusbar"><span id="currentTime">--:--</span><span>现场快速处置</span></div>
+      <a class="home-return" href="../welding-guide-home/" aria-label="返回HOMEPAGE统一入口" title="返回HOMEPAGE">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 10 9-7 9 7"/><path d="M5 9v12h5v-7h4v7h5V9"/>
+        </svg>
+      </a>
+      <div class="statusbar"><span>现场快速处置</span><span id="currentTime">--:--</span></div>
       <h1>101301 激光焊机</h1>
       <p class="subtitle">操作工快速处置手册</p>
       <p class="hero-values">安全 · 稳定 · 高效 · 绿色运行</p>
       <span class="brand">MADE BY FANGPING</span>
-      <button id="installBtn" class="install-btn" type="button">安装到桌面</button>
+      <button id="installBtn" class="install-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3v10m-4-4 4 4 4-4"/><path d="M7 5H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-3M8 22h8m-4-4v4"/>
+        </svg>
+        <span>安装到桌面</span>
+      </button>
     </header>
 
     <nav class="nav" aria-label="主模块">
@@ -468,7 +528,7 @@
     </section>
 
     <footer class="footer">
-      版本：V1.0.32<br>
+      版本：V1.0.33<br>
       适用设备：激光焊机<br>
       适用人员：焊机操作工<br>
       维护人：焊接管理组
@@ -935,6 +995,14 @@
     updateOfflineNotice();
     registerPwa();
     attachLaserDiagnosisSteps(); attachClampPlatformSteps(); renderMaintenance(); renderFaults(); renderSafety(); applyDeepLink();
+    /* 101更新红点：只确认本页面实际显示的版本，不从网络猜测已读版本。 */
+    (function () {
+      var footer = document.querySelector('.footer');
+      var match = footer && footer.textContent.match(/版本：\s*V(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)/);
+      if (!match) { return; }
+      try { localStorage.setItem('welding-guide-updates:seen:101', match[1]); }
+      catch (_) { /* 禁用存储时不影响手册使用。 */ }
+    })();
   </script>
 </body>
 </html>
