@@ -23,8 +23,8 @@ test("prepends laser fault indication and local panel instructions using supplie
     const bytes = await readFile(new URL("../" + step.image.split("?")[0], import.meta.url));
     assert.equal(bytes.subarray(1, 4).toString(), "PNG");
   }
-  assert.match(worker, /const APP_VERSION = "1\.0\.35"/);
-  assert.match(html, /版本：V1\.0\.35<br>/);
+  assert.match(worker, /const APP_VERSION = "1\.0\.36"/);
+  assert.match(html, /版本：V1\.0\.36<br>/);
 });
 
 test("installs the core update without downloading all step images first", async function() {
