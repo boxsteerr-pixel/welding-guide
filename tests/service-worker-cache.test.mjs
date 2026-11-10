@@ -13,18 +13,18 @@ test("prepends laser fault indication and local panel instructions using supplie
   vm.runInContext(html.slice(start, end) + "\nattachLaserDiagnosisSteps();", context);
   assert.match(laser.steps[0], /HMI画面上出现光源故障/);
   assert.match(laser.steps[1], /操作室HMI无激光源画面/);
-  assert.match(laser.visualSteps[0].image, /laser-source-fault-alarm\.png/);
-  assert.match(laser.visualSteps[1].image, /laser-source-local-panel\.png/);
+  assert.match(laser.visualSteps[0].image, /laser-source-fault-alarm-lossless-v1\.webp/);
+  assert.match(laser.visualSteps[1].image, /laser-source-local-panel-lossless-v1\.webp/);
   assert.equal(laser.visualSteps[2].title, "进入激光画面");
   vm.runInContext(worker.slice(0, worker.indexOf("/* 后台逐张缓存")), vm.createContext({
     URL, self: { location: { href: "https://example.test/welding-guide/service-worker.js", origin: "https://example.test" } }
   }));
   for (const step of laser.visualSteps.slice(0, 2)) {
     const bytes = await readFile(new URL("../" + step.image.split("?")[0], import.meta.url));
-    assert.equal(bytes.subarray(1, 4).toString(), "PNG");
+    assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
   }
-  assert.match(worker, /const APP_VERSION = "1\.0\.37"/);
-  assert.match(html, /版本：V1\.0\.37<br>/);
+  assert.match(worker, /const APP_VERSION = "1\.0\.38"/);
+  assert.match(html, /版本：V1\.0\.38<br>/);
 });
 
 test("installs the core update without downloading all step images first", async function() {
