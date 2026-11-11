@@ -525,7 +525,7 @@
     </section>
 
     <footer class="footer">
-      版本：V1.0.38<br>
+      版本：V1.0.39<br>
       适用设备：激光焊机<br>
       适用人员：焊机操作工<br>
       维护人：焊接管理组
@@ -681,8 +681,20 @@
     function escapeHtml(text) { return String(text || "").replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
     function highlight(text, kw) { var s = escapeHtml(text); if (!kw) return s; return s.replace(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), function(m){ return "<mark>" + m + "</mark>"; }); }
     function list(items) { return "<ul>" + items.map(function(x){ return "<li>" + escapeHtml(x) + "</li>"; }).join("") + "</ul>"; }
+    var mobilePreviewAssets = [
+      { original: 'assets/steps/guide-wheel-cleaning-tool.webp', image: 'assets/steps/guide-wheel-cleaning-tool-preview-mobile-v2.webp' },
+      { original: 'assets/steps/guide-wheel-gap-lubrication-1.webp', image: 'assets/steps/guide-wheel-gap-lubrication-1-preview-mobile-v2.webp' },
+      { original: 'assets/steps/welding-car-underside-check-1.webp', image: 'assets/steps/welding-car-underside-check-1-preview-mobile-v2.webp' },
+      { original: 'assets/steps/laser-source-fault-alarm-lossless-v1.webp', image: 'assets/steps/laser-source-fault-alarm-preview-mobile-v2.webp' },
+      { original: 'assets/steps/laser-source-local-panel-lossless-v1.webp', image: 'assets/steps/laser-source-local-panel-preview-mobile-v2.webp' }
+    ];
+    function previewImage(src) {
+      var path = src.split('?')[0];
+      var match = mobilePreviewAssets.find(function(item){ return item.original === path; });
+      return match ? match.image : src;
+    }
     function mediaBlock(item) {
-      var imgs = (item.mediaImages || []).map(function(src){ return '<img class="pin-img" loading="lazy" decoding="async" src="' + src + '" alt="现场图片" onclick="openImageModal(event, this.src, this.alt)">'; }).join("");
+      var imgs = (item.mediaImages || []).map(function(src){ return '<img class="pin-img" loading="lazy" decoding="async" src="' + previewImage(src) + '" data-original-src="' + src + '" alt="现场图片" onclick="openImageModal(event, this.dataset.originalSrc || this.src, this.alt)">'; }).join("");
       var vids = (item.mediaVideos || []).map(function(src){ return '<video class="pin-img" controls src="' + src + '"></video>'; }).join("");
       if ((item.visualSteps || []).length && !imgs && !vids) return "";
       return imgs + vids + '<div class="media-slot">预留图片及视频位置：后续可在数据中的 mediaImages / mediaVideos 填入 Base64。</div>';
@@ -690,7 +702,7 @@
     function renderVisualSteps(item) {
       if (!item.visualSteps || !item.visualSteps.length) return '';
       return '<div class="kv"><b>图文操作步骤</b><div class="visual-steps">' + item.visualSteps.map(function(step, index){
-        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p>' + (step.image ? '<img class="visual-step-img" loading="lazy" decoding="async" src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.src, this.alt)"><span class="image-tap-hint">点击查看大图</span>' : '') + '</div>';
+        return '<div class="visual-step"><span class="visual-step-title">' + (index + 1) + '. ' + escapeHtml(step.title) + '</span><p class="visual-step-text">' + escapeHtml(step.text) + '</p>' + (step.image ? '<img class="visual-step-img" loading="lazy" decoding="async" src="' + previewImage(step.image) + '" data-original-src="' + step.image + '" alt="' + escapeHtml(step.title) + '" onclick="openImageModal(event, this.dataset.originalSrc || this.src, this.alt)"><span class="image-tap-hint">点击查看大图</span>' : '') + '</div>';
       }).join('') + '</div></div>';
     }
     function attachLaserDiagnosisSteps() {
@@ -810,7 +822,16 @@
       }
       var modal = document.getElementById('imageModal');
       var img = document.getElementById('imageModalImg');
-      img.src = src;
+      var displayed = event && event.currentTarget && event.currentTarget.src || src;
+      img.src = displayed;
+      img.dataset.fullSource = src;
+      if (displayed !== new URL(src, location.href).href) {
+        var fullImage = new Image();
+        fullImage.onload = function() {
+          if (modal.classList.contains('active') && img.dataset.fullSource === src) img.src = fullImage.src;
+        };
+        fullImage.src = src;
+      }
       img.alt = alt || '放大图片';
       resetModalImage();
       document.body.classList.add('modal-open');
